@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SimpleMPG by Doni_354</title>
+  <title>Tic Tac Toe - Mode Selection</title>
   <style>
-    /* Reset dasar */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -23,7 +22,26 @@
       color: #ecf0f1;
       text-align: center;
     }
-    h1 { font-size: 2em; }
+    h1 { font-size: 1.8em; }
+    nav {
+      width: 100%;
+      padding: 10px;
+      background: #bdc3c7;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    nav a, nav button {
+      padding: 8px 16px;
+      background: #ecf0f1;
+      border: none;
+      border-radius: 5px;
+      color: #2c3e50;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    nav a:hover, nav button:hover { background: #dcdde1; }
     .container {
       padding: 40px;
       text-align: center;
@@ -46,12 +64,17 @@
 </head>
 <body>
   <header>
-    <h1>SimpleMPG by Doni_354</h1>
+    <h1>SimpleMPG</h1>
   </header>
+  <nav>
+    <button onclick="history.back()">Back</button>
+    <a href="index.html">Home</a>
+  </nav>
   <div class="container">
-    <h2>Available Games</h2>
+    <h2>Tic Tac Toe</h2>
+    <p>Select Mode:</p>
     <div class="menu">
-      <a href="tic-tac-toe.html">Tic Tac Toe</a>
+      <a href="tic-tac-toe-game.html">PlayerVsPlayer</a>
     </div>
   </div>
 </body>
