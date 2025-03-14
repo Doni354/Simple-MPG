@@ -1,114 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .board {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 5px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .cell {
-            width: 100px;
-            height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            cursor: pointer;
-        }
-        .cell.disabled {
-            pointer-events: none;
-            background-color: #ddd;
-        }
-        .message {
-            margin-top: 20px;
-            font-size: 1.5em;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .board-container {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      margin: 20px auto;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 5px;
+      background-color: #444;
+      padding: 5px;
+    }
+    .cell {
+      background-color: #fff;
+      aspect-ratio: 1/1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .cell:hover {
+      background-color: #f0f0f0;
+    }
+    .cell.disabled {
+      pointer-events: none;
+      background-color: #eee;
+    }
+    .line {
+      position: absolute;
+      background-color: red;
+      height: 5px;
+      width: 0;
+      transform-origin: left center;
+      transition: all 0.5s ease;
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 1.5em;
+      color: #333;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #555;
+    }
+  </style>
 </head>
 <body>
-    <h1>Tic Tac Toe</h1>
-    <div class="board" id="board"></div>
-    <div class="message" id="message"></div>
-    <button onclick="resetGame()">Try Again</button>
+  <h1>Tic Tac Toe</h1>
+  <div class="board-container">
+    <div id="board" class="board"></div>
+    <!-- Garis kemenangan akan ditampilkan di sini -->
+    <div id="winningLine" class="line" style="display: none;"></div>
+  </div>
+  <div class="message" id="message"></div>
+  <button onclick="resetGame()">Try Again</button>
 
-    <script>
-        const board = document.getElementById("board");
-        const message = document.getElementById("message");
-        let currentPlayer = "O";
-        let cells = [];
-        
-        function createBoard() {
-            board.innerHTML = "";
-            cells = [];
-            for (let i = 0; i < 9; i++) {
-                let cell = document.createElement("div");
-                cell.classList.add("cell");
-                cell.dataset.index = i;
-                cell.addEventListener("click", handleMove);
-                board.appendChild(cell);
-                cells.push(cell);
-            }
-            message.textContent = `Player ${currentPlayer}'s Turn`;
+  <script>
+    const boardContainer = document.querySelector('.board-container');
+    const board = document.getElementById("board");
+    const message = document.getElementById("message");
+    const winningLine = document.getElementById("winningLine");
+    let currentPlayer = "O";
+    let cells = [];
+
+    function createBoard() {
+      board.innerHTML = "";
+      cells = [];
+      winningLine.style.display = 'none'; // sembunyikan garis kemenangan saat reset
+      for (let i = 0; i < 9; i++) {
+        let cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.dataset.index = i;
+        cell.addEventListener("click", handleMove);
+        board.appendChild(cell);
+        cells.push(cell);
+      }
+      message.textContent = `Player ${currentPlayer}'s Turn`;
+    }
+
+    function handleMove(event) {
+      let cell = event.target;
+      if (cell.textContent === "") {
+        cell.textContent = currentPlayer;
+        cell.classList.add("disabled");
+
+        let winCombo = checkWin();
+        if (winCombo) {
+          message.textContent = `Player ${currentPlayer} Wins!`;
+          drawWinningLine(winCombo);
+          disableBoard();
+          return;
         }
-        
-        function handleMove(event) {
-            let cell = event.target;
-            if (cell.textContent === "") {
-                cell.textContent = currentPlayer;
-                cell.classList.add("disabled");
-                if (checkWin()) {
-                    message.textContent = `Player ${currentPlayer} Wins!`;
-                    disableBoard();
-                    return;
-                }
-                currentPlayer = currentPlayer === "O" ? "X" : "O";
-                message.textContent = `Player ${currentPlayer}'s Turn`;
-            }
+        // Cek kondisi seri jika semua cell sudah terisi
+        if (cells.every(cell => cell.textContent !== "")) {
+          message.textContent = "Draw!";
+          disableBoard();
+          return;
         }
-        
-        function checkWin() {
-            const winningCombinations = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8],
-                [0, 3, 6], [1, 4, 7], [2, 5, 8],
-                [0, 4, 8], [2, 4, 6]
-            ];
-            return winningCombinations.some(combination => {
-                const [a, b, c] = combination;
-                return cells[a].textContent !== "" &&
-                       cells[a].textContent === cells[b].textContent &&
-                       cells[a].textContent === cells[c].textContent;
-            });
+        currentPlayer = currentPlayer === "O" ? "X" : "O";
+        message.textContent = `Player ${currentPlayer}'s Turn`;
+      }
+    }
+
+    function checkWin() {
+      const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],  // horizontal
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],  // vertikal
+        [0, 4, 8], [2, 4, 6]              // diagonal
+      ];
+      for (let combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (
+          cells[a].textContent !== "" &&
+          cells[a].textContent === cells[b].textContent &&
+          cells[a].textContent === cells[c].textContent
+        ) {
+          return combination;
         }
-        
-        function disableBoard() {
-            cells.forEach(cell => cell.classList.add("disabled"));
-        }
-        
-        function resetGame() {
-            currentPlayer = "O";
-            createBoard();
-        }
-        
-        createBoard();
-    </script>
+      }
+      return null;
+    }
+
+    function disableBoard() {
+      cells.forEach(cell => cell.classList.add("disabled"));
+    }
+
+    function drawWinningLine(combination) {
+      // Dapatkan posisi board dan cell pemenang
+      const boardRect = board.getBoundingClientRect();
+      const startCellRect = cells[combination[0]].getBoundingClientRect();
+      const endCellRect = cells[combination[2]].getBoundingClientRect();
+
+      // Hitung titik tengah cell relatif terhadap board
+      const startX = startCellRect.left + startCellRect.width / 2 - boardRect.left;
+      const startY = startCellRect.top + startCellRect.height / 2 - boardRect.top;
+      const endX = endCellRect.left + endCellRect.width / 2 - boardRect.left;
+      const endY = endCellRect.top + endCellRect.height / 2 - boardRect.top;
+
+      const dx = endX - startX;
+      const dy = endY - startY;
+      const length = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+      winningLine.style.display = 'block';
+      winningLine.style.width = length + 'px';
+      winningLine.style.left = startX + 'px';
+      winningLine.style.top = startY + 'px';
+      winningLine.style.transform = 'rotate(' + angle + 'deg)';
+    }
+
+    function resetGame() {
+      currentPlayer = "O";
+      createBoard();
+    }
+
+    createBoard();
+  </script>
 </body>
 </html>
