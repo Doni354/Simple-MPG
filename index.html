@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tic Tac Toe</title>
+  <title>Tic Tac Toe - Dynamic Replacement</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -43,7 +43,7 @@
       justify-content: center;
       font-size: 2.5em;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, opacity 0.3s ease;
       border-radius: 5px;
     }
     .cell:hover {
@@ -52,6 +52,10 @@
     .cell.disabled {
       pointer-events: none;
       background-color: #eee;
+    }
+    /* Efek fade untuk marker yang akan direplace */
+    .cell.faded {
+      opacity: 0.5;
     }
     /* Warna khusus untuk X dan O */
     .cell.x {
@@ -101,53 +105,83 @@
   </div>
   <div class="message" id="message"></div>
   <button onclick="resetGame()">Try Again</button>
+
   <script>
-    const boardContainer = document.querySelector('.board-container');
     const board = document.getElementById("board");
     const message = document.getElementById("message");
     const winningLine = document.getElementById("winningLine");
     let currentPlayer = "O";
     let cells = [];
+    // Melacak urutan pilihan tiap pemain (menyimpan index cell)
+    let playerMoves = { "O": [], "X": [] };
 
     function createBoard() {
       board.innerHTML = "";
       cells = [];
-      winningLine.style.display = 'none'; // Sembunyikan garis kemenangan saat reset
+      playerMoves = { "O": [], "X": [] };
+      winningLine.style.display = 'none';
       for (let i = 0; i < 9; i++) {
         let cell = document.createElement("div");
         cell.classList.add("cell");
         cell.dataset.index = i;
         cell.addEventListener("click", handleMove);
+        cell.addEventListener("mouseover", handlePreFade);
+        cell.addEventListener("touchstart", handlePreFade);
         board.appendChild(cell);
         cells.push(cell);
       }
+      currentPlayer = "O";
       message.textContent = `Player ${currentPlayer}'s Turn`;
+    }
+
+    // Ketika pointer/layar menyentuh cell kosong, cek apakah sudah ada 3 marker
+    // Jika iya, marker pertama akan otomatis diberi efek fade.
+    function handlePreFade(event) {
+      if (playerMoves[currentPlayer].length === 3) {
+        let firstIndex = playerMoves[currentPlayer][0];
+        let firstCell = cells[firstIndex];
+        if (!firstCell.classList.contains("faded")) {
+          firstCell.classList.add("faded");
+        }
+      }
     }
 
     function handleMove(event) {
       let cell = event.target;
-      if (cell.textContent === "") {
-        cell.textContent = currentPlayer;
-        cell.classList.add("disabled");
-        // Tambahkan kelas untuk styling warna
-        cell.classList.add(currentPlayer.toLowerCase());
-        
-        let winCombo = checkWin();
-        if (winCombo) {
-          message.textContent = `Player ${currentPlayer} Wins!`;
-          drawWinningLine(winCombo);
-          disableBoard();
-          return;
-        }
-        // Cek kondisi draw jika semua cell sudah terisi
-        if (cells.every(cell => cell.textContent !== "")) {
-          message.textContent = "Draw!";
-          disableBoard();
-          return;
-        }
-        currentPlayer = currentPlayer === "O" ? "X" : "O";
-        message.textContent = `Player ${currentPlayer}'s Turn`;
+      if (cell.textContent !== "") return; // Abaikan jika cell sudah terisi
+
+      // Jika pemain sudah memiliki 3 marker dan marker pertama sudah redup, hapus marker pertama
+      if (playerMoves[currentPlayer].length === 3 && cells[playerMoves[currentPlayer][0]].classList.contains("faded")) {
+        let firstIndex = playerMoves[currentPlayer][0];
+        let firstCell = cells[firstIndex];
+        firstCell.textContent = "";
+        firstCell.classList.remove("disabled", "faded", "x", "o");
+        playerMoves[currentPlayer].shift();
       }
+
+      // Tempatkan marker baru
+      cell.textContent = currentPlayer;
+      cell.classList.add("disabled");
+      cell.classList.add(currentPlayer.toLowerCase());
+      playerMoves[currentPlayer].push(parseInt(cell.dataset.index));
+
+      // Cek kondisi menang
+      let winCombo = checkWin();
+      if (winCombo) {
+        message.textContent = `Player ${currentPlayer} Wins!`;
+        drawWinningLine(winCombo);
+        disableBoard();
+        return;
+      }
+      // Cek kondisi seri (draw)
+      if (cells.every(cell => cell.textContent !== "")) {
+        message.textContent = "Draw!";
+        disableBoard();
+        return;
+      }
+      // Ganti giliran
+      currentPlayer = currentPlayer === "O" ? "X" : "O";
+      message.textContent = `Player ${currentPlayer}'s Turn`;
     }
 
     function checkWin() {
@@ -196,7 +230,6 @@
     }
 
     function resetGame() {
-      currentPlayer = "O";
       createBoard();
     }
 
