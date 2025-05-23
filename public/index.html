@@ -3,386 +3,141 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SimpleMPG by Doni_354</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
-  <style>
-    /* Reset and base styles */
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    :root {
-      --primary: #7e22ce;
-      --primary-dark: #581c87;
-      --secondary: #10b981;
-      --dark: #1e293b;
-      --light: #f8fafc;
-      --accent: #f97316;
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-    
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--light);
-      color: var(--dark);
-      min-height: 100vh;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(126, 34, 206, 0.1) 0%, rgba(126, 34, 206, 0.03) 90%),
-        linear-gradient(to bottom right, rgba(16, 185, 129, 0.1), rgba(249, 115, 22, 0.1));
-      background-attachment: fixed;
-    }
-    
-    /* Header styles */
-    .navbar {
-      background-color: var(--dark);
-      color: var(--light);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      position: relative;
-      z-index: 10;
-    }
-    
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    
-    .logo-icon {
-      width: 40px;
-      height: 40px;
-      background-color: var(--primary);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1.25rem;
-      color: white;
-      box-shadow: 0 0 10px rgba(126, 34, 206, 0.5);
-    }
-    
-    .logo-text h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-    
-    .logo-text span {
-      font-size: 0.75rem;
-      opacity: 0.8;
-    }
-    
-    /* Hero section */
-    .hero {
-      padding: 4rem 2rem;
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .hero h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      background: linear-gradient(to right, var(--primary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-fill-color: transparent;
-    }
-    
-    .hero p {
-      font-size: 1.125rem;
-      color: var(--dark);
-      opacity: 0.8;
-      margin-bottom: 2rem;
-      line-height: 1.6;
-    }
-    
-    /* Games section */
-    .games-section {
-      padding: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    .section-title {
-      text-align: center;
-      margin-bottom: 2.5rem;
-      position: relative;
-      font-size: 1.75rem;
-      color: var(--dark);
-    }
-    
-    .section-title::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 4px;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      border-radius: 2px;
-    }
-    
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-    
-    .game-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      position: relative;
-    }
-    
-    .game-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-    
-    .game-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-    }
-    
-    .game-img {
-      width: 100%;
-      height: 160px;
-      background-color: #ddd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      color: var(--primary);
-      background-image: linear-gradient(45deg, #f1f5f9 25%, transparent 25%, transparent 75%, #f1f5f9 75%, #f1f5f9), 
-                        linear-gradient(45deg, #f1f5f9 25%, transparent 25%, transparent 75%, #f1f5f9 75%, #f1f5f9);
-      background-size: 20px 20px;
-      background-position: 0 0, 10px 10px;
-    }
-    
-    .game-content {
-      padding: 1.5rem;
-    }
-    
-    .game-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--dark);
-    }
-    
-    .game-description {
-      font-size: 0.875rem;
-      color: var(--dark);
-      opacity: 0.8;
-      margin-bottom: 1.5rem;
-      line-height: 1.5;
-    }
-    
-    .play-button {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      background-color: var(--primary);
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: 500;
-      transition: background-color 0.3s ease;
-    }
-    
-    .play-button:hover {
-      background-color: var(--primary-dark);
-    }
-    
-    /* Coming soon card */
-    .coming-soon {
-      opacity: 0.7;
-      position: relative;
-    }
-    
-    .coming-soon::after {
-      content: 'Coming Soon';
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: var(--accent);
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    
-    /* Footer */
-    footer {
-      margin-top: 4rem;
-      background-color: var(--dark);
-      color: var(--light);
-      padding: 2rem;
-      text-align: center;
-    }
-    
-    .footer-content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin: 1rem 0;
-    }
-    
-    .footer-links a {
-      color: var(--light);
-      text-decoration: none;
-      opacity: 0.8;
-      transition: opacity 0.3s ease;
-    }
-    
-    .footer-links a:hover {
-      opacity: 1;
-    }
-    
-    .copyright {
-      margin-top: 1.5rem;
-      font-size: 0.875rem;
-      opacity: 0.6;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .hero h2 {
-        font-size: 2rem;
-      }
-      
-      .games-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      }
-      
-      .navbar {
-        padding: 1rem;
-      }
-      
-      .logo-text h1 {
-        font-size: 1.25rem;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .hero {
-        padding: 3rem 1rem;
-      }
-      
-      .hero h2 {
-        font-size: 1.75rem;
-      }
-      
-      .games-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .section-title {
-        font-size: 1.5rem;
-      }
-      
-      .logo-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 1rem;
-      }
-    }
-  </style>
+  <title>SimpleMPG by Doni_354 - Multiplayer Games Platform</title>
+  <meta name="description" content="Play classic multiplayer games online with friends. Tic Tac Toe, Rock Paper Scissors, and more - all in your browser!">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/components.css">
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div class="logo">
-      <div class="logo-icon">S</div>
-      <div class="logo-text">
-        <h1>SimpleMPG</h1>
-        <span>by Doni_354</span>
-      </div>
-    </div>
-  </nav>
+  <!-- Header will be loaded here -->
+  <div id="header"></div>
   
-  <!-- Hero Section -->
-  <section class="hero">
-    <h2>Simple Multiplayer Games</h2>
-    <p>Play classic games with friends in real-time using our Firebase-powered multiplayer platform. No downloads required, just pure browser gaming fun!</p>
-  </section>
+  <!-- Main content -->
+  <main class="main-container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <h2>Simple Multiplayer Games</h2>
+      <p>Experience the thrill of classic games with a modern twist. Play with friends in real-time, challenge our AI, or compete with players worldwide. No downloads required - just pure browser gaming fun!</p>
+      <div class="hero-cta">
+        <a href="/pages/tic-tac-toe/modes.html" class="hero-btn hero-btn-primary">
+          <span>🎮</span>
+          <span>Start Playing</span>
+        </a>
+        <a href="/pages/profile.html" class="hero-btn hero-btn-secondary">
+          <span>📊</span>
+          <span>View Stats</span>
+        </a>
+      </div>
+    </section>
+    
+    <!-- Games Section -->
+    <section class="games-section">
+      <h3 class="section-title">Available Games</h3>
+      <div class="grid">
+        <!-- Tic Tac Toe Card -->
+        <div class="card">
+          <div class="game-img">
+            <span>⭕❌</span>
+          </div>
+          <div class="card-content">
+            <h4 class="game-title">Tic Tac Toe</h4>
+            <p class="game-description">The timeless classic of strategy and wit. Challenge friends locally, test your skills against our AI, or compete with players online in real-time matches.</p>
+            <a href="/pages/tic-tac-toe/modes.html" class="btn">Play Now</a>
+          </div>
+        </div>
+        
+        <!-- Rock Paper Scissors Card (Coming Soon) -->
+        <div class="card coming-soon">
+          <div class="game-img">
+            <span>✊✋✌️</span>
+          </div>
+          <div class="card-content">
+            <h4 class="game-title">Rock Paper Scissors</h4>
+            <p class="game-description">The ultimate game of chance and psychology. Outsmart your opponents with mind games and strategic thinking in this classic hand game.</p>
+            <a href="#" class="btn">Coming Soon</a>
+          </div>
+        </div>
+        
+        <!-- Connect Four Card (Coming Soon) -->
+        <div class="card coming-soon">
+          <div class="game-img">
+            <span>🔴🔵</span>
+          </div>
+          <div class="card-content">
+            <h4 class="game-title">Connect Four</h4>
+            <p class="game-description">Strategic disc-dropping action at its finest. Plan your moves carefully and be the first to connect four discs in a row to claim victory!</p>
+            <a href="#" class="btn">Coming Soon</a>
+          </div>
+        </div>
+        
+        <!-- Chess Card (Coming Soon) -->
+        <div class="card coming-soon">
+          <div class="game-img">
+            <span>♔♛</span>
+          </div>
+          <div class="card-content">
+            <h4 class="game-title">Chess</h4>
+            <p class="game-description">The royal game of strategy and intellect. Master the art of tactical warfare on the 64-square battlefield in this timeless classic.</p>
+            <a href="#" class="btn">Coming Soon</a>
+          </div>
+        </div>
+        
+        <!-- Checkers Card (Coming Soon) -->
+        <div class="card coming-soon">
+          <div class="game-img">
+            <span>⚫⚪</span>
+          </div>
+          <div class="card-content">
+            <h4 class="game-title">Checkers</h4>
+            <p class="game-description">Jump your way to victory in this classic board game. Capture your opponent's pieces and crown your kings in strategic battles.</p>
+            <a href="#" class="btn">Coming Soon</a>
+          </div>
+        </div>
+        
+        <!-- Battleship Card (Coming Soon) -->
+        <div class="card coming-soon">
+          <div class="game-img">
+            <span>🚢💥</span>
+          </div>
+          <div class="card-content">
+            <h4 class="game-title">Battleship</h4>
+            <p class="game-description">Naval warfare at its most strategic. Hide your fleet and hunt down enemy ships in this thrilling game of deduction and luck.</p>
+            <a href="#" class="btn">Coming Soon</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features-section" style="padding: 4rem 0; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 20px; margin: 4rem 0;">
+      <div style="max-width: 1000px; margin: 0 auto; padding: 0 2rem;">
+        <h3 class="section-title" style="color: var(--dark);">Why Choose SimpleMPG?</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+          <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+            <h4 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--dark);">Instant Play</h4>
+            <p style="color: var(--dark); opacity: 0.8; line-height: 1.6;">No downloads, no installations. Jump straight into the action with our browser-based gaming platform.</p>
+          </div>
+          <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🌐</div>
+            <h4 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--dark);">Real-time Multiplayer</h4>
+            <p style="color: var(--dark); opacity: 0.8; line-height: 1.6;">Powered by Firebase for seamless real-time gaming experiences with players worldwide.</p>
+          </div>
+          <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+            <h4 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--dark);">Track Progress</h4>
+            <p style="color: var(--dark); opacity: 0.8; line-height: 1.6;">Monitor your gaming statistics, win rates, and achievements across all games.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
   
-  <!-- Games Section -->
-  <section class="games-section">
-    <h3 class="section-title">Available Games</h3>
-    <div class="games-grid">
-      <!-- Tic Tac Toe Card -->
-      <div class="game-card">
-        <div class="game-img">
-          <span>⭕❌</span>
-        </div>
-        <div class="game-content">
-          <h4 class="game-title">Tic Tac Toe</h4>
-          <p class="game-description">The classic game of X's and O's. Challenge a friend and see who can get three in a row first!</p>
-          <a href="tic-tac-toe.html" class="play-button">Play Now</a>
-        </div>
-      </div>
-      
-      <!-- Rock Paper Scissors Card (Coming Soon) -->
-      <div class="game-card coming-soon">
-        <div class="game-img">
-          <span>✊✋✌️</span>
-        </div>
-        <div class="game-content">
-          <h4 class="game-title">Rock Paper Scissors</h4>
-          <p class="game-description">Test your luck and strategy in this timeless game of chance against online opponents.</p>
-          <a href="#" class="play-button">Coming Soon</a>
-        </div>
-      </div>
-      
-      <!-- Connect Four Card (Coming Soon) -->
-      <div class="game-card coming-soon">
-        <div class="game-img">
-          <span>🔴🔵</span>
-        </div>
-        <div class="game-content">
-          <h4 class="game-title">Connect Four</h4>
-          <p class="game-description">Drop your colored discs and be the first to connect four in a row to win!</p>
-          <a href="#" class="play-button">Coming Soon</a>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Footer will be loaded here -->
+  <div id="footer"></div>
   
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="#">About</a>
-        <a href="#">Privacy</a>
-        <a href="#">Contact</a>
-      </div>
-      <p class="copyright">© 2024 SimpleMPG by Doni_354. All rights reserved.</p>
-    </div>
-  </footer>
+  <!-- Scripts -->
+  <script src="/js/components.js"></script>
 </body>
 </html>

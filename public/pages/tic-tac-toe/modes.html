@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tic Tac Toe - Mode Selection | SimpleMPG</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <!-- Header will be loaded here -->
+  <div id="header"></div>
+  
+  <!-- Main content -->
+  <main class="main-container">
+    <h2 class="page-title">Tic Tac Toe</h2>
+    <p class="text-center" style="margin-bottom: 2rem; text-align: center;">Select a game mode to start playing:</p>
+    
+    <div class="mode-selection">
+      <!-- Player vs Player -->
+      <a href="/pages/tic-tac-toe/pvp.html" class="mode-card">
+        <div class="mode-icon">👥</div>
+        <div class="mode-details">
+          <h3 class="mode-title">Player vs Player</h3>
+          <p class="mode-description">Play against a friend on the same device</p>
+        </div>
+      </a>
+      
+      <!-- Player vs Computer -->
+      <a href="/pages/tic-tac-toe/pvc.html" class="mode-card">
+        <div class="mode-icon">🤖</div>
+        <div class="mode-details">
+          <h3 class="mode-title">Player vs Computer</h3>
+          <p class="mode-description">Challenge our AI in different difficulty levels</p>
+        </div>
+      </a>
+      
+      <!-- Player vs Player Online -->
+      <a href="/pages/tic-tac-toe/online.html" class="mode-card">
+        <div class="mode-icon">🌐</div>
+        <div class="mode-details">
+          <h3 class="mode-title">Player vs Player Online</h3>
+          <p class="mode-description">Play against other players online in real-time</p>
+        </div>
+      </a>
+    </div>
+  </main>
+  
+  <!-- Footer will be loaded here -->
+  <div id="footer"></div>
+  
+  <!-- Scripts -->
+  <script src="/js/components.js"></script>
+</body>
+</html>

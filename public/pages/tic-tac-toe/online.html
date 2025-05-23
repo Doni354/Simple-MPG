@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tic Tac Toe - Online Multiplayer | SimpleMPG</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <style>
+    /* Game specific styles */
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      padding: 1rem;
+    }
+    
+    /* Matchmaking styles */
+    .matchmaking {
+      width: 100%;
+      max-width: 450px;
+      background-color: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      text-align: center;
+    }
+    
+    .matchmaking h3 {
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+      position: relative;
+      display: inline-block;
+    }
+    
+    .matchmaking h3::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+    
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .input-group label {
+      display: block;
+      text-align: left;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--dark);
+      opacity: 0.8;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(126, 34, 206, 0.1);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+      color: var(--dark);
+      opacity: 0.5;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background-color: #e2e8f0;
+    }
+    
+    .divider span {
+      padding: 0 1rem;
+    }
+    
+    /* Quick match button */
+    .quick-match-btn {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s;
+      margin-bottom: 1rem;
+      width: 100%;
+    }
+    
+    .quick-match-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .quick-match-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    /* Game area styles */
+    .game-area {
+      display: none;
+      width: 100%;
+      max-width: 450px;
+    }
+    
+    .game-info {
+      background-color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--card-shadow);
+      text-align: center;
+    }
+    
+    .room-code {
+      display: inline-block;
+      background-color: #f1f5f9;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+      border: 1px dashed var(--primary);
+    }
+    
+    .copy-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      margin-left: 0.5rem;
+      transition: opacity 0.3s;
+    }
+    
+    .copy-btn:hover {
+      opacity: 0.8;
+    }
+    
+    .scoreboard {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    
+    .player-score {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 8px;
+      background-color: #f8fafc;
+      position: relative;
+    }
+    
+    .player-score.o {
+      margin-right: 0.5rem;
+      border-top: 3px solid var(--secondary);
+    }
+    
+    .player-score.x {
+      margin-left: 0.5rem;
+      border-top: 3px solid var(--accent);
+    }
+    
+    .player-score.active::before {
+      content: '•';
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+    
+    .player-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .player-symbol {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+    
+    .player-score.o .player-symbol {
+      color: var(--secondary);
+    }
+    
+    .player-score.x .player-symbol {
+      color: var(--accent);
+    }
+    
+    .score-value {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--dark);
+    }
+    
+    .game-message {
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--dark);
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to right, var(--primary-dark), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .board-container {
+      position: relative;
+      width: 100%;
+      max-width: 350px;
+      margin: 0 auto;
+    }
+    
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      background-color: var(--primary);
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .cell {
+      background-color: white;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .cell:hover {
+      background-color: #f8f9fa;
+      transform: scale(1.02);
+    }
+    
+    .cell.disabled {
+      pointer-events: none;
+    }
+    
+    .cell.faded {
+      opacity: 0.4;
+      background-color: #f0f0f0;
+      position: relative;
+    }
+    
+    .cell.faded::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+    
+    .cell.x {
+      color: var(--accent);
+    }
+    
+    .cell.o {
+      color: var(--secondary);
+    }
+    
+    .line {
+      position: absolute;
+      background-color: #10b981;
+      height: 10px;
+      border-radius: 5px;
+      width: 0;
+      transform-origin: left center;
+      transition: all 0.5s;
+      z-index: 10;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+    
+    /* Overlay for game end */
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(30, 41, 59, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      border-radius: 12px;
+      z-index: 20;
+      backdrop-filter: blur(2px);
+    }
+    
+    .overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    /* Retry button */
+    .retry-btn {
+      border: none;
+      background: var(--primary);
+      color: white;
+      font-size: 1.5rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s, background-color 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .retry-btn:hover {
+      background: var(--primary-dark);
+      transform: scale(1.1) rotate(180deg);
+    }
+    
+    .game-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .waiting-message {
+      font-style: italic;
+      color: var(--dark);
+      opacity: 0.7;
+      margin-top: 0.5rem;
+    }
+    
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 140px;
+      background-color: var(--dark);
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.75rem;
+    }
+    
+    .tooltip .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--dark) transparent transparent transparent;
+    }
+    
+    .tooltip.show .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    @media (max-width: 480px) {
+      .matchmaking {
+        padding: 1.5rem;
+      }
+      
+      .cell {
+        font-size: 2.5rem;
+      }
+      
+      .board-container {
+        max-width: 300px;
+      }
+      
+      .game-message {
+        font-size: 1.125rem;
+      }
+      
+      .player-name {
+        font-size: 0.75rem;
+      }
+      
+      .player-symbol {
+        font-size: 1rem;
+      }
+      
+      .score-value {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header will be loaded here -->
+  <div id="header"></div>
+  
+  <!-- Main content -->
+  <main class="main-container">
+    <h2 class="page-title">Tic Tac Toe Online</h2>
+    
+    <div class="game-container">
+      <!-- Matchmaking Section -->
+      <div id="matchmaking" class="matchmaking">
+        <h3>Quick Match</h3>
+        <button id="quickMatchBtn" class="quick-match-btn">Find Random Opponent</button>
+        <div id="searchingMessage" class="waiting-message" style="display: none;">Searching for opponent...</div>
+        
+        <div class="divider"><span>OR</span></div>
+        
+        <h3>Create a Room</h3>
+        <div class="input-group">
+          <label for="playerNameInput">Your Name</label>
+          <input type="text" id="playerNameInput" class="input-field" placeholder="Enter your name">
+        </div>
+        <button id="createRoomBtn" class="btn">Create Room</button>
+        
+        <div class="divider"><span>OR</span></div>
+        
+        <h3>Join a Room</h3>
+        <div class="input-group">
+          <label for="joinRoomIdInput">Room ID</label>
+          <input type="text" id="joinRoomIdInput" class="input-field" placeholder="Enter Room ID">
+        </div>
+        <div class="input-group">
+          <label for="joinPlayerNameInput">Your Name</label>
+          <input type="text" id="joinPlayerNameInput" class="input-field" placeholder="Enter your name">
+        </div>
+        <button id="joinRoomBtn" class="btn btn-secondary">Join Room</button>
+      </div>
+      
+      <!-- Game Area Section -->
+      <div id="gameArea" class="game-area">
+        <div class="game-info">
+          <div id="roomCodeDisplay" class="room-code">
+            Room ID: <span id="roomIdText"></span>
+            <button id="copyRoomId" class="copy-btn tooltip">
+              📋
+              <span class="tooltip-text" id="copyTooltip">Copy to clipboard</span>
+            </button>
+          </div>
+          
+          <div class="scoreboard">
+            <div id="playerO" class="player-score o">
+              <div class="player-name" id="nameO">Player O</div>
+              <div class="player-symbol">O</div>
+              <div class="score-value" id="scoreO">0</div>
+            </div>
+            
+            <div id="playerX" class="player-score x">
+              <div class="player-name" id="nameX">Player X</div>
+              <div class="player-symbol">X</div>
+              <div class="score-value" id="scoreX">0</div>
+            </div>
+          </div>
+          
+          <div id="waitingMessage" class="waiting-message">Waiting for opponent to join...</div>
+          <div id="messageArea" class="game-message">Loading game data...</div>
+        </div>
+        
+        <div id="boardContainer" class="board-container">
+          <div id="board" class="board"></div>
+          <div id="winningLine" class="line" style="display: none;"></div>
+          
+          <!-- Overlay for game end -->
+          <div id="overlay" class="overlay">
+            <button class="retry-btn" id="retryBtn" title="Play Again">↺</button>
+          </div>
+        </div>
+        
+        <div class="game-controls">
+          <a href="/pages/tic-tac-toe/modes.html" class="btn btn-outline">Back to Modes</a>
+          <button id="leaveRoomBtn" class="btn">Leave Room</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Footer will be loaded here -->
+  <div id="footer"></div>
+  
+  <!-- Scripts -->
+  <script src="/js/components.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc, 
+      updateDoc, 
+      onSnapshot, 
+      deleteDoc,
+      collection,
+      query,
+      where,
+      getDocs,
+      addDoc
+    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    import { getCurrentUser, updateUserStats } from '/js/auth.js';
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyC3cKwDuQQa51jEEsD7Sozkw0I14RJyp-o",
+        authDomain: "simplempg-6c08f.firebaseapp.com",
+        projectId: "simplempg-6c08f",
+        storageBucket: "simplempg-6c08f.firebasestorage.app",
+        messagingSenderId: "209428104937",
+        appId: "1:209428104937:web:f39d3cc32c63242819d278",
+        measurementId: "G-FWLG7WWCW8"
+      };
+
+      // Initialize Firebase and Firestore
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // === Global Variables for Room ===
+      const matchmakingDiv = document.getElementById("matchmaking");
+      const gameAreaDiv = document.getElementById("gameArea");
+      const quickMatchBtn = document.getElementById("quickMatchBtn");
+      const searchingMessage = document.getElementById("searchingMessage");
+      const createRoomBtn = document.getElementById("createRoomBtn");
+      const joinRoomBtn = document.getElementById("joinRoomBtn");
+      const leaveRoomBtn = document.getElementById("leaveRoomBtn");
+      const playerNameInput = document.getElementById("playerNameInput");
+      const joinRoomIdInput = document.getElementById("joinRoomIdInput");
+      const joinPlayerNameInput = document.getElementById("joinPlayerNameInput");
+      const messageArea = document.getElementById("messageArea");
+      const roomIdText = document.getElementById("roomIdText");
+      const copyRoomId = document.getElementById("copyRoomId");
+      const copyTooltip = document.getElementById("copyTooltip");
+      const waitingMessage = document.getElementById("waitingMessage");
+      const playerO = document.getElementById("playerO");
+      const playerX = document.getElementById("playerX");
+      const nameOElement = document.getElementById("nameO");
+      const nameXElement = document.getElementById("nameX");
+      const scoreOElement = document.getElementById("scoreO");
+      const scoreXElement = document.getElementById("scoreX");
+      const retryBtn = document.getElementById("retryBtn");
+
+      let roomId = null;
+      let playerSymbol = null; // "O" or "X"
+      let currentPlayer = "O";
+      let gameState = Array(9).fill("");
+      let movesO = [];
+      let movesX = [];
+      let scoreO = 0;
+      let scoreX = 0;
+      let nameO = "";
+      let nameX = "";
+      let roomDocRef = null;
+      let boardCells = [];
+      let gameEnded = false; // prevent score from increasing continuously
+      let unsubscribe = null; // for cleaning up Firestore listener
+      let isQuickMatch = false;
+
+      // === Quick Match Functions ===
+      quickMatchBtn.addEventListener("click", async () => {
+        const user = getCurrentUser();
+        if (!user) {
+          alert("Please sign in to use quick match");
+          return;
+        }
+        
+        quickMatchBtn.disabled = true;
+        searchingMessage.style.display = "block";
+        quickMatchBtn.textContent = "Searching...";
+        
+        try {
+          // Look for available rooms
+          const roomsRef = collection(db, "matchmaking");
+          const q = query(roomsRef, where("status", "==", "waiting"));
+          const querySnapshot = await getDocs(q);
+          
+          if (!querySnapshot.empty) {
+            // Join existing room
+            const availableRoom = querySnapshot.docs[0];
+            roomId = availableRoom.id;
+            playerSymbol = "X";
+            nameX = user.displayName || "Player";
+            isQuickMatch = true;
+            
+            // Update room to mark as matched
+            await updateDoc(doc(db, "matchmaking", roomId), {
+              status: "matched",
+              playerX: user.uid,
+              nameX: nameX
+            });
+            
+            // Join the game room
+            await updateDoc(doc(db, "rooms", roomId), { nameX: nameX });
+            await initRoom(false);
+            roomIdText.textContent = roomId;
+            waitingMessage.style.display = "none";
+          } else {
+            // Create new room for matchmaking
+            roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+            playerSymbol = "O";
+            nameO = user.displayName || "Player";
+            isQuickMatch = true;
+            
+            // Create matchmaking entry
+            await setDoc(doc(db, "matchmaking", roomId), {
+              status: "waiting",
+              playerO: user.uid,
+              nameO: nameO,
+              createdAt: new Date()
+            });
+            
+            await initRoom(true);
+            roomIdText.textContent = roomId;
+            waitingMessage.style.display = "block";
+            
+            // Listen for opponent joining
+            const matchmakingRef = doc(db, "matchmaking", roomId);
+            const unsubscribeMatchmaking = onSnapshot(matchmakingRef, (doc) => {
+              if (doc.exists() && doc.data().status === "matched") {
+                waitingMessage.style.display = "none";
+                unsubscribeMatchmaking();
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Error in quick match:", error);
+          alert("Error finding match: " + error.message);
+          quickMatchBtn.disabled = false;
+          searchingMessage.style.display = "none";
+          quickMatchBtn.textContent = "Find Random Opponent";
+        }
+      });
+
+      // === Matchmaking Functions ===
+      createRoomBtn.addEventListener("click", async () => {
+        const pname = playerNameInput.value.trim();
+        if (!pname) {
+          alert("Please enter your name");
+          return;
+        }
+        roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+        playerSymbol = "O";
+        nameO = pname;
+        isQuickMatch = false;
+        await initRoom(true);
+        roomIdText.textContent = roomId;
+        waitingMessage.style.display = "block";
+      });
+
+      joinRoomBtn.addEventListener("click", async () => {
+        const roomInput = joinRoomIdInput.value.trim().toUpperCase();
+        const pname = joinPlayerNameInput.value.trim();
+        if (!roomInput || !pname) {
+          alert("Please enter room ID and your name");
+          return;
+        }
+        roomId = roomInput;
+        playerSymbol = "X";
+        nameX = pname;
+        isQuickMatch = false;
+        await initRoom(false);
+        roomIdText.textContent = roomId;
+        waitingMessage.style.display = "none";
+      });
+      
+      leaveRoomBtn.addEventListener("click", async () => {
+        if (confirm("Are you sure you want to leave this room?")) {
+          if (unsubscribe) {
+            unsubscribe();
+          }
+          
+          // Clean up matchmaking entry if it was a quick match
+          if (isQuickMatch) {
+            try {
+              await deleteDoc(doc(db, "matchmaking", roomId));
+            } catch (error) {
+              console.error("Error cleaning up matchmaking:", error);
+            }
+          }
+          
+          matchmakingDiv.style.display = "block";
+          gameAreaDiv.style.display = "none";
+          quickMatchBtn.disabled = false;
+          searchingMessage.style.display = "none";
+          quickMatchBtn.textContent = "Find Random Opponent";
+          
+          // Clear inputs
+          playerNameInput.value = "";
+          joinRoomIdInput.value = "";
+          joinPlayerNameInput.value = "";
+        }
+      });
+      
+      // Copy room ID to clipboard
+      copyRoomId.addEventListener("click", () => {
+        navigator.clipboard.writeText(roomId).then(() => {
+          copyTooltip.textContent = "Copied!";
+          copyRoomId.classList.add("show");
+          setTimeout(() => {
+            copyRoomId.classList.remove("show");
+            setTimeout(() => {
+              copyTooltip.textContent = "Copy to clipboard";
+            }, 300);
+          }, 2000);
+        });
+      });
+
+      // === Initialize Room & Firestore Listener ===
+      async function initRoom(isCreator) {
+        matchmakingDiv.style.display = "none";
+        gameAreaDiv.style.display = "block";
+        createBoardUI();
+        gameEnded = false;
+        roomDocRef = doc(db, "rooms", roomId);
+        
+        if (isCreator) {
+          await setDoc(roomDocRef, {
+            gameState: Array(9).fill(""),
+            currentPlayer: "O",
+            movesO: [],
+            movesX: [],
+            scoreO: 0,
+            scoreX: 0,
+            nameO: nameO,
+            nameX: ""
+          });
+        } else {
+          try {
+            await updateDoc(roomDocRef, { nameX: nameX });
+          } catch (error) {
+            alert("Room not found or error joining: " + error.message);
+            matchmakingDiv.style.display = "block";
+            gameAreaDiv.style.display = "none";
+            return;
+          }
+        }
+        
+        // Set up Firestore listener
+        unsubscribe = onSnapshot(roomDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            updateUI(data);
+          } else {
+            alert("Room no longer exists!");
+            matchmakingDiv.style.display = "block";
+            gameAreaDiv.style.display = "none";
+            if (unsubscribe) {
+              unsubscribe();
+            }
+          }
+        });
+      }
+
+      // === UI Board Setup ===
+      function createBoardUI() {
+        const boardDiv = document.getElementById("board");
+        boardDiv.innerHTML = "";
+        boardCells = [];
+        
+        for (let i = 0; i < 9; i++) {
+          let cell = document.createElement("div");
+          cell.classList.add("cell");
+          cell.dataset.index = i;
+          cell.addEventListener("click", handleCellClick);
+          boardDiv.appendChild(cell);
+          boardCells.push(cell);
+        }
+        
+        messageArea.textContent = "Loading game data...";
+      }
+
+      // === Update faded cells automatically ===
+      function updateFadedCells() {
+        // Clear all faded states first
+        boardCells.forEach(cell => cell.classList.remove("faded"));
+        
+        // Add faded state to first marker if current player has 3 markers
+        if (currentPlayer === playerSymbol) {
+          let movesArr = (playerSymbol === "O") ? movesO : movesX;
+          if (movesArr.length === 3) {
+            const cellIndex = movesArr[0];
+            const cell = boardCells[cellIndex];
+            if (cell) {
+              cell.classList.add("faded");
+            }
+          }
+        }
+      }
+
+      // === Handle Move (3 Choice Mechanism) ===
+      async function handleCellClick(event) {
+        if (currentPlayer !== playerSymbol || gameEnded) return;
+        const index = parseInt(event.target.dataset.index);
+        if (gameState[index] !== "") return;
+        
+        let movesArr = (playerSymbol === "O") ? movesO.slice() : movesX.slice();
+        
+        if (movesArr.length === 3) {
+          const removeIndex = movesArr[0];
+          gameState[removeIndex] = "";
+          movesArr.shift();
+        }
+        
+        gameState[index] = playerSymbol;
+        movesArr.push(index);
+        
+        if (playerSymbol === "O") { 
+          movesO = movesArr; 
+        } else { 
+          movesX = movesArr; 
+        }
+        
+        await updateDoc(roomDocRef, {
+          gameState: gameState,
+          currentPlayer: (playerSymbol === "O") ? "X" : "O",
+          movesO: movesO,
+          movesX: movesX
+        });
+      }
+
+      // === Update UI based on Firestore data ===
+      function updateUI(data) {
+        gameState = data.gameState;
+        currentPlayer = data.currentPlayer;
+        movesO = data.movesO || [];
+        movesX = data.movesX || [];
+        scoreO = data.scoreO || 0;
+        scoreX = data.scoreX || 0;
+        nameO = data.nameO || "Player O";
+        nameX = data.nameX || "Waiting...";
+        
+        // Update player names and scores
+        nameOElement.textContent = nameO;
+        nameXElement.textContent = nameX;
+        scoreOElement.textContent = scoreO;
+        scoreXElement.textContent = scoreX;
+        
+        // Update waiting message
+        if (nameX === "Waiting..." || nameX === "") {
+          waitingMessage.style.display = "block";
+        } else {
+          waitingMessage.style.display = "none";
+        }
+        
+        // Update active player indicator
+        playerO.classList.toggle("active", currentPlayer === "O");
+        playerX.classList.toggle("active", currentPlayer === "X");
+        
+        // Update board cells
+        boardCells.forEach((cell, i) => {
+          cell.textContent = gameState[i] || "";
+          cell.classList.remove("disabled", "x", "o", "faded");
+          
+          if (gameState[i]) {
+            cell.classList.add("disabled");
+            cell.classList.add(gameState[i].toLowerCase());
+          }
+        });
+        
+        // Update faded cells automatically
+        updateFadedCells();
+        
+        // Check for win
+        const winCombo = checkWin(gameState);
+        if (winCombo) {
+          const winner = gameState[winCombo[0]];
+          if (!gameEnded) {
+            messageArea.textContent = `${winner === "O" ? nameO : nameX} Wins!`;
+            drawWinningLine(winCombo);
+            disableBoard();
+            gameEnded = true;
+            
+            if (winner === "O") scoreO++;
+            else if (winner === "X") scoreX++;
+            
+            updateDoc(roomDocRef, { scoreO: scoreO, scoreX: scoreX });
+            showOverlay();
+            
+            // Update user stats
+            const isWinner = winner === playerSymbol;
+            updateUserStats("online", isWinner ? "win" : "loss");
+          }
+        } else if (gameState.every(cell => cell !== "") && !gameEnded) {
+          // Check for draw
+          messageArea.textContent = "It's a Draw!";
+          disableBoard();
+          gameEnded = true;
+          showOverlay();
+          
+          // Update user stats for draw
+          updateUserStats("online", "draw");
+        } else {
+          // Game continues
+          messageArea.textContent = `${currentPlayer === "O" ? nameO : nameX}'s Turn`;
+          document.getElementById("winningLine").style.display = "none";
+        }
+      }
+
+      function disableBoard() {
+        boardCells.forEach(cell => cell.classList.add("disabled"));
+      }
+
+      // === Check for Win ===
+      function checkWin(state) {
+        const combos = [
+          [0,1,2],[3,4,5],[6,7,8],
+          [0,3,6],[1,4,7],[2,5,8],
+          [0,4,8],[2,4,6]
+        ];
+        for (const combo of combos) {
+          const [a, b, c] = combo;
+          if (state[a] && state[a] === state[b] && state[a] === state[c]) {
+            return combo;
+          }
+        }
+        return null;
+      }
+
+      function drawWinningLine(combo) {
+        const containerRect = document.getElementById("boardContainer").getBoundingClientRect();
+        const startCellRect = boardCells[combo[0]].getBoundingClientRect();
+        const endCellRect = boardCells[combo[2]].getBoundingClientRect();
+        const startX = startCellRect.left + startCellRect.width / 2 - containerRect.left;
+        const startY = startCellRect.top + startCellRect.height / 2 - containerRect.top;
+        const endX = endCellRect.left + endCellRect.width / 2 - containerRect.left;
+        const endY = endCellRect.top + endCellRect.height / 2 - containerRect.top;
+        const dx = endX - startX;
+        const dy = endY - startY;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        const winningLine = document.getElementById("winningLine");
+        winningLine.style.display = "block";
+        winningLine.style.width = length + "px";
+        winningLine.style.left = startX + "px";
+        winningLine.style.top = startY + "px";
+        winningLine.style.transform = "rotate(" + angle + "deg)";
+      }
+
+      // === Show Overlay (for Retry) ===
+      function showOverlay() {
+        document.getElementById("overlay").classList.add("active");
+      }
+
+      // === Reset Game (only reset board, keep score) ===
+      async function resetGame() {
+        gameEnded = false;
+        await updateDoc(roomDocRef, {
+          gameState: Array(9).fill(""),
+          currentPlayer: "O",
+          movesO: [],
+          movesX: []
+        });
+        document.getElementById("overlay").classList.remove("active");
+      }
+
+      // Make resetGame accessible to retry button
+      retryBtn.addEventListener("click", resetGame);
+      window.resetGame = resetGame;
+      
+      // Handle page unload/close
+      window.addEventListener("beforeunload", () => {
+        if (unsubscribe) {
+          unsubscribe();
+        }
+        
+        // Clean up matchmaking entry if it was a quick match
+        if (isQuickMatch && roomId) {
+          try {
+            deleteDoc(doc(db, "matchmaking", roomId));
+          } catch (error) {
+            console.error("Error cleaning up matchmaking:", error);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

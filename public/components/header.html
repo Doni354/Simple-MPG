@@ -1,0 +1,83 @@
+<header class="navbar">
+  <div class="nav-container">
+    <a href="/index.html" class="logo">
+      <div class="logo-icon">S</div>
+      <div class="logo-text">
+        <h1>SimpleMPG</h1>
+        <span>by Doni_354</span>
+      </div>
+    </a>
+    
+    <div class="nav-auth">
+      <div id="userInfo" class="user-info" style="display: none;">
+        <a href="/pages/profile.html" class="user-profile-link">
+          <img id="userAvatar" class="user-avatar" src="/placeholder.svg" alt="User Avatar">
+          <div class="user-details">
+            <span id="userName" class="user-name">User</span>
+            <span class="user-status">Online</span>
+          </div>
+        </a>
+      </div>
+      <button id="authButton" class="auth-button">
+        <span class="auth-icon">🔐</span>
+        <span>Sign In with Google</span>
+      </button>
+    </div>
+    
+    <button class="menu-toggle" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+  
+  <!-- Mobile Sidebar -->
+  <div class="mobile-sidebar" id="mobileSidebar">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar-content">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="logo-icon">S</div>
+          <div class="logo-text">
+            <h1>SimpleMPG</h1>
+            <span>by Doni_354</span>
+          </div>
+        </div>
+        <button class="sidebar-close" id="sidebarClose">✕</button>
+      </div>
+      
+      <div class="sidebar-nav">
+        <a href="/index.html" class="sidebar-link">
+          <span class="sidebar-icon">🏠</span>
+          <span>Home</span>
+        </a>
+        <a href="/pages/tic-tac-toe/modes.html" class="sidebar-link">
+          <span class="sidebar-icon">⭕</span>
+          <span>Tic Tac Toe</span>
+        </a>
+        <a href="/pages/profile.html" class="sidebar-link" id="profileSidebarLink" style="display: none;">
+          <span class="sidebar-icon">👤</span>
+          <span>Profile</span>
+        </a>
+        <a href="#" class="sidebar-link">
+          <span class="sidebar-icon">ℹ️</span>
+          <span>About</span>
+        </a>
+      </div>
+      
+      <div class="sidebar-auth">
+        <div id="sidebarUserInfo" class="sidebar-user-info" style="display: none;">
+          <img id="sidebarUserAvatar" class="sidebar-user-avatar" src="/placeholder.svg" alt="User Avatar">
+          <div class="sidebar-user-details">
+            <span id="sidebarUserName" class="sidebar-user-name">User</span>
+            <span class="sidebar-user-email" id="sidebarUserEmail">user@example.com</span>
+          </div>
+        </div>
+        <button id="sidebarAuthButton" class="sidebar-auth-button">
+          <span class="auth-icon">🔐</span>
+          <span>Sign In with Google</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

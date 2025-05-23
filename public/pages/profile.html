@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile | SimpleMPG</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <style>
+    .profile-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .profile-card {
+      background: linear-gradient(135deg, white 0%, #f8fafc 100%);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      border: 1px solid rgba(126, 34, 206, 0.1);
+    }
+    
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid #f1f5f9;
+    }
+    
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--primary);
+      box-shadow: 0 8px 25px rgba(126, 34, 206, 0.3);
+    }
+    
+    .profile-info h2 {
+      margin: 0 0 0.5rem 0;
+      color: var(--dark);
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .profile-info p {
+      margin: 0 0 0.5rem 0;
+      color: var(--dark);
+      opacity: 0.7;
+      font-size: 1.1rem;
+    }
+    
+    .profile-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    
+    .games-section {
+      margin-bottom: 3rem;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f1f5f9;
+    }
+    
+    .section-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+      box-shadow: 0 4px 15px rgba(126, 34, 206, 0.3);
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 0;
+    }
+    
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: var(--dark);
+      opacity: 0.6;
+      margin: 0;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, #f8fafc 0%, white 100%);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      border-color: var(--primary);
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--dark);
+      opacity: 0.8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .overall-stats {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .overall-stats .section-header {
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 2rem;
+    }
+    
+    .overall-stats .section-icon {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    
+    .overall-stats .section-title,
+    .overall-stats .section-subtitle {
+      color: white;
+    }
+    
+    .overall-stats .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .overall-stats .stat-card::before {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .overall-stats .stat-value {
+      color: white;
+      background: none;
+      -webkit-background-clip: unset;
+      -webkit-text-fill-color: unset;
+      background-clip: unset;
+    }
+    
+    .overall-stats .stat-label {
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .login-prompt {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, white 0%, #f8fafc 100%);
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .login-prompt h3 {
+      margin-bottom: 1rem;
+      color: var(--dark);
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .login-prompt p {
+      margin-bottom: 2rem;
+      color: var(--dark);
+      opacity: 0.8;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    
+    .login-prompt .btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(126, 34, 206, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .login-prompt .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(126, 34, 206, 0.4);
+    }
+    
+    .coming-soon-game {
+      opacity: 0.6;
+      position: relative;
+    }
+    
+    .coming-soon-game::after {
+      content: 'Coming Soon';
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--accent);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+      .profile-container {
+        padding: 1rem;
+      }
+      
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+      
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .profile-info h2 {
+        font-size: 1.5rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+      }
+      
+      .stat-card {
+        padding: 1rem;
+      }
+      
+      .stat-value {
+        font-size: 2rem;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .login-prompt {
+        padding: 3rem 1.5rem;
+      }
+      
+      .login-prompt h3 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header will be loaded here -->
+  <div id="header"></div>
+  
+  <!-- Main content -->
+  <main class="main-container">
+    <h2 class="page-title">Player Profile</h2>
+    
+    <div class="profile-container">
+      <div id="loginPrompt" class="login-prompt">
+        <h3>🎮 Join the Gaming Community</h3>
+        <p>Sign in with Google to track your game statistics, compete with other players, and unlock achievements across all our games.</p>
+        <button id="signInButton" class="btn">🔐 Sign In with Google</button>
+      </div>
+      
+      <div id="profileContent" style="display: none;">
+        <!-- Profile Header -->
+        <div class="profile-card">
+          <div class="profile-header">
+            <img id="profileAvatar" class="profile-avatar" src="/placeholder.svg" alt="Profile Avatar">
+            <div class="profile-info">
+              <h2 id="profileName">Player Name</h2>
+              <p id="profileEmail">player@example.com</p>
+              <div class="profile-badge">🏆 Gaming Champion</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Overall Statistics -->
+        <div class="overall-stats">
+          <div class="section-header">
+            <div class="section-icon">📊</div>
+            <div>
+              <h3 class="section-title">Overall Statistics</h3>
+              <p class="section-subtitle">Your performance across all games</p>
+            </div>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="totalGames">0</div>
+              <div class="stat-label">Total Games</div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-value" id="totalWins">0</div>
+              <div class="stat-label">Total Wins</div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-value" id="totalLosses">0</div>
+              <div class="stat-label">Total Losses</div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-value" id="totalDraws">0</div>
+              <div class="stat-label">Total Draws</div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-value" id="winRate">0%</div>
+              <div class="stat-label">Win Rate</div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-value" id="gamesPlayed">0</div>
+              <div class="stat-label">Games Played</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tic Tac Toe Statistics -->
+        <div class="games-section">
+          <div class="profile-card">
+            <div class="section-header">
+              <div class="section-icon">⭕</div>
+              <div>
+                <h3 class="section-title">Tic Tac Toe</h3>
+                <p class="section-subtitle">Classic 3x3 grid strategy game</p>
+              </div>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value" id="tttTotalGames">0</div>
+                <div class="stat-label">Total Games</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value" id="tttPvpGames">0</div>
+                <div class="stat-label">PvP Games</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value" id="tttPvcGames">0</div>
+                <div class="stat-label">vs Computer</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value" id="tttOnlineGames">0</div>
+                <div class="stat-label">Online Games</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value" id="tttWinRate">0%</div>
+                <div class="stat-label">Win Rate</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value" id="tttBestStreak">0</div>
+                <div class="stat-label">Best Streak</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Rock Paper Scissors Statistics (Coming Soon) -->
+        <div class="games-section">
+          <div class="profile-card coming-soon-game">
+            <div class="section-header">
+              <div class="section-icon">✂️</div>
+              <div>
+                <h3 class="section-title">Rock Paper Scissors</h3>
+                <p class="section-subtitle">Classic hand game of chance and strategy</p>
+              </div>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Total Games</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Wins</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Win Rate</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Best Streak</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Connect Four Statistics (Coming Soon) -->
+        <div class="games-section">
+          <div class="profile-card coming-soon-game">
+            <div class="section-header">
+              <div class="section-icon">🔴</div>
+              <div>
+                <h3 class="section-title">Connect Four</h3>
+                <p class="section-subtitle">Strategic disc-dropping connection game</p>
+              </div>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Total Games</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Wins</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Win Rate</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Best Streak</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Footer will be loaded here -->
+  <div id="footer"></div>
+  
+  <!-- Scripts -->
+  <script src="/js/components.js"></script>
+  <script type="module">
+    import { initAuth, signInWithGoogle, getCurrentUser, getUserStats } from '/js/auth.js';
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Initialize auth
+      initAuth();
+      
+      // Elements
+      const loginPrompt = document.getElementById('loginPrompt');
+      const profileContent = document.getElementById('profileContent');
+      const signInButton = document.getElementById('signInButton');
+      
+      // Sign in button
+      signInButton.addEventListener('click', signInWithGoogle);
+      
+      // Check auth state and update UI
+      const checkAuthAndUpdateProfile = async () => {
+        const user = getCurrentUser();
+        
+        if (user) {
+          // User is signed in
+          loginPrompt.style.display = 'none';
+          profileContent.style.display = 'block';
+          
+          // Update profile info
+          document.getElementById('profileAvatar').src = user.photoURL || '/placeholder.svg?height=100&width=100';
+          document.getElementById('profileName').textContent = user.displayName || 'Player';
+          document.getElementById('profileEmail').textContent = user.email || '';
+          
+          // Load and display stats
+          const stats = await getUserStats();
+          if (stats) {
+            // Overall stats
+            const totalGames = stats.totalGames || 0;
+            const wins = stats.wins || 0;
+            const losses = stats.losses || 0;
+            const draws = stats.draws || 0;
+            
+            document.getElementById('totalGames').textContent = totalGames;
+            document.getElementById('totalWins').textContent = wins;
+            document.getElementById('totalLosses').textContent = losses;
+            document.getElementById('totalDraws').textContent = draws;
+            document.getElementById('gamesPlayed').textContent = totalGames;
+            
+            // Calculate win rate
+            const winRate = totalGames > 0 ? Math.round((wins / totalGames) * 100) : 0;
+            document.getElementById('winRate').textContent = winRate + '%';
+            
+            // Tic Tac Toe specific stats
+            const tttTotal = (stats.pvpGames || 0) + (stats.pvcGames || 0) + (stats.onlineGames || 0);
+            document.getElementById('tttTotalGames').textContent = tttTotal;
+            document.getElementById('tttPvpGames').textContent = stats.pvpGames || 0;
+            document.getElementById('tttPvcGames').textContent = stats.pvcGames || 0;
+            document.getElementById('tttOnlineGames').textContent = stats.onlineGames || 0;
+            
+            // Tic Tac Toe win rate (same as overall for now since it's the only game)
+            document.getElementById('tttWinRate').textContent = winRate + '%';
+            
+            // Best streak (placeholder for now)
+            document.getElementById('tttBestStreak').textContent = Math.max(wins, 0);
+          }
+        } else {
+          // User is not signed in
+          loginPrompt.style.display = 'block';
+          profileContent.style.display = 'none';
+        }
+      };
+      
+      // Initial check
+      setTimeout(checkAuthAndUpdateProfile, 1000);
+      
+      // Listen for auth state changes
+      setInterval(checkAuthAndUpdateProfile, 2000);
+    });
+  </script>
+</body>
+</html>

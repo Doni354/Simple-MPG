@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tic Tac Toe - Player vs Computer | SimpleMPG</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <style>
+    /* Game specific styles */
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      padding: 1rem;
+    }
+    
+    .game-message {
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--dark);
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to right, var(--primary-dark), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .board-container {
+      position: relative;
+      width: 100%;
+      max-width: 350px;
+      margin: 0 auto;
+    }
+    
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      background-color: var(--primary);
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .cell {
+      background-color: white;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .cell:hover {
+      background-color: #f8f9fa;
+      transform: scale(1.02);
+    }
+    
+    .cell.disabled {
+      pointer-events: none;
+    }
+    
+    .cell.x {
+      color: var(--accent);
+    }
+    
+    .cell.o {
+      color: var(--secondary);
+    }
+    
+    .line {
+      position: absolute;
+      background-color: #10b981;
+      height: 10px;
+      border-radius: 5px;
+      width: 0;
+      transform-origin: left center;
+      transition: all 0.5s;
+      z-index: 10;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+    
+    /* Overlay for game end */
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(30, 41, 59, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      border-radius: 12px;
+      z-index: 20;
+      backdrop-filter: blur(2px);
+    }
+    
+    .overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    /* Retry button */
+    .retry-btn {
+      border: none;
+      background: var(--primary);
+      color: white;
+      font-size: 1.5rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s, background-color 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .retry-btn:hover {
+      background: var(--primary-dark);
+      transform: scale(1.1) rotate(180deg);
+    }
+    
+    .game-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .player-info {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 350px;
+      margin-bottom: 1rem;
+    }
+    
+    .player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      background-color: white;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s;
+    }
+    
+    .player.active {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .player.human {
+      border-top: 3px solid var(--secondary);
+    }
+    
+    .player.computer {
+      border-top: 3px solid var(--accent);
+    }
+    
+    .player-label {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .player-symbol {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .player.human .player-symbol {
+      color: var(--secondary);
+    }
+    
+    .player.computer .player-symbol {
+      color: var(--accent);
+    }
+    
+    .player-status {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    
+    /* Computer thinking animation */
+    .thinking {
+      position: relative;
+    }
+    
+    .thinking::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--accent);
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    @media (max-width: 480px) {
+      .game-message {
+        font-size: 1.25rem;
+      }
+      
+      .cell {
+        font-size: 2.5rem;
+      }
+      
+      .board-container {
+        max-width: 300px;
+      }
+      
+      .player-info {
+        max-width: 300px;
+      }
+      
+      .player {
+        padding: 0.5rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header will be loaded here -->
+  <div id="header"></div>
+  
+  <!-- Main content -->
+  <main class="main-container">
+    <h2 class="page-title">Tic Tac Toe</h2>
+    
+    <div class="game-container">
+      <div class="game-message" id="message"></div>
+      
+      <div class="player-info">
+        <div class="player human active" id="player-human">
+          <div class="player-label">Player</div>
+          <div class="player-symbol">O</div>
+          <div class="player-status">Your Turn</div>
+        </div>
+        
+        <div class="player computer" id="player-computer">
+          <div class="player-label">Computer</div>
+          <div class="player-symbol">X</div>
+          <div class="player-status">Waiting</div>
+        </div>
+      </div>
+      
+      <div class="board-container">
+        <div id="board" class="board"></div>
+        <div id="winningLine" class="line" style="display: none;"></div>
+        
+        <!-- Overlay for game end -->
+        <div id="overlay" class="overlay">
+          <button class="retry-btn" id="retryBtn" title="Play Again">↺</button>
+        </div>
+      </div>
+      
+      <div class="game-controls">
+        <a href="/pages/tic-tac-toe/modes.html" class="btn btn-outline">Back to Modes</a>
+        <button class="btn" id="resetBtn">Reset Game</button>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Footer will be loaded here -->
+  <div id="footer"></div>
+  
+  <!-- Scripts -->
+  <script src="/js/components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const board = document.getElementById("board");
+      const message = document.getElementById("message");
+      const winningLine = document.getElementById("winningLine");
+      const overlay = document.getElementById("overlay");
+      const resetBtn = document.getElementById("resetBtn");
+      const retryBtn = document.getElementById("retryBtn");
+      const playerHuman = document.getElementById("player-human");
+      const playerComputer = document.getElementById("player-computer");
+      
+      // Dalam mode Player vs Bot: pemain = "O" (giliran pertama), bot = "X"
+      let currentPlayer = "O";
+      let cells = [];
+      // gameState menyimpan nilai "" atau "O"/"X" per index (0-8)
+      let gameState = Array(9).fill("");
+
+      function createBoard() {
+        board.innerHTML = "";
+        cells = [];
+        gameState = Array(9).fill("");
+        winningLine.style.display = 'none';
+        overlay.classList.remove("active");
+        
+        for (let i = 0; i < 9; i++) {
+          let cell = document.createElement("div");
+          cell.classList.add("cell");
+          cell.dataset.index = i;
+          cell.addEventListener("click", handleMove);
+          cell.addEventListener("touchstart", function(e) {
+            // Untuk mode PvC, kita tidak perlu handlePreFade karena hanya pemain yang memiliki 3 marker
+            // Tapi kita bisa menambahkan efek visual untuk sentuhan
+            if (currentPlayer === "O" && gameState[i] === "") {
+              cell.style.transition = "transform 0.2s";
+              cell.style.transform = "scale(0.95)";
+              setTimeout(() => {
+                cell.style.transform = "";
+              }, 200);
+            }
+          });
+          board.appendChild(cell);
+          cells.push(cell);
+        }
+        
+        currentPlayer = "O";
+        updatePlayerIndicators();
+        message.textContent = `Player's Turn`;
+      }
+      
+      function updatePlayerIndicators() {
+        // Update active player
+        playerHuman.classList.toggle("active", currentPlayer === "O");
+        playerComputer.classList.toggle("active", currentPlayer === "X");
+        
+        // Update status
+        if (currentPlayer === "O") {
+          playerHuman.querySelector('.player-status').textContent = "Your Turn";
+          playerComputer.querySelector('.player-status').textContent = "Waiting";
+          playerComputer.classList.remove("thinking");
+        } else {
+          playerHuman.querySelector('.player-status').textContent = "Waiting";
+          playerComputer.querySelector('.player-status').textContent = "Thinking...";
+          playerComputer.classList.add("thinking");
+        }
+      }
+
+      function handleMove(event) {
+        if (currentPlayer !== "O") return; // hanya proses jika giliran pemain
+        let cell = event.target;
+        let index = parseInt(cell.dataset.index);
+        if (gameState[index] !== "") return; // sel sudah terisi
+
+        // Tempatkan marker pemain ("O")
+        cell.textContent = "O";
+        cell.classList.add("disabled", "o");
+        gameState[index] = "O";
+
+        let winCombo = checkWin();
+        if (winCombo) {
+          message.textContent = `Player Wins!`;
+          drawWinningLine(winCombo);
+          disableBoard();
+          showOverlay();
+          return;
+        }
+        if (gameState.every(s => s !== "")) {
+          message.textContent = "It's a Draw!";
+          disableBoard();
+          showOverlay();
+          return;
+        }
+        // Giliran berpindah ke bot ("X")
+        currentPlayer = "X";
+        updatePlayerIndicators();
+        message.textContent = `Computer's Turn`;
+        setTimeout(botMove, 1000);
+      }
+
+      function checkWin() {
+        const winningCombinations = [
+          [0, 1, 2], [3, 4, 5], [6, 7, 8],
+          [0, 3, 6], [1, 4, 7], [2, 5, 8],
+          [0, 4, 8], [2, 4, 6]
+        ];
+        for (let combination of winningCombinations) {
+          const [a, b, c] = combination;
+          if (
+            gameState[a] !== "" &&
+            gameState[a] === gameState[b] &&
+            gameState[a] === gameState[c]
+          ) {
+            return combination;
+          }
+        }
+        return null;
+      }
+
+      function disableBoard() {
+        cells.forEach(cell => cell.classList.add("disabled"));
+        playerHuman.classList.remove("active");
+        playerComputer.classList.remove("active", "thinking");
+        playerHuman.querySelector('.player-status').textContent = "Game Over";
+        playerComputer.querySelector('.player-status').textContent = "Game Over";
+      }
+
+      function drawWinningLine(combination) {
+        const boardRect = board.getBoundingClientRect();
+        const startCellRect = cells[combination[0]].getBoundingClientRect();
+        const endCellRect = cells[combination[2]].getBoundingClientRect();
+        const startX = startCellRect.left + startCellRect.width / 2 - boardRect.left;
+        const startY = startCellRect.top + startCellRect.height / 2 - boardRect.top;
+        const endX = endCellRect.left + endCellRect.width / 2 - boardRect.left;
+        const endY = endCellRect.top + endCellRect.height / 2 - boardRect.top;
+        const dx = endX - startX;
+        const dy = endY - startY;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        winningLine.style.display = 'block';
+        winningLine.style.width = length + 'px';
+        winningLine.style.left = startX + 'px';
+        winningLine.style.top = startY + 'px';
+        winningLine.style.transform = 'rotate(' + angle + 'deg)';
+      }
+
+      function showOverlay() {
+        overlay.classList.add("active");
+      }
+
+      // Bot move: strategi sederhana untuk menang, memblok, atau memilih secara acak.
+      function botMove() {
+        // Cari langkah kemenangan untuk bot ("X")
+        let move = findWinningMove("X");
+        if (move === null) {
+          // Jika tidak ada, cari langkah untuk memblok kemenangan pemain ("O")
+          move = findWinningMove("O");
+        }
+        if (move === null) {
+          // Jika masih tidak ada, pilih secara acak dari sel kosong
+          let available = [];
+          for (let i = 0; i < 9; i++) {
+            if (gameState[i] === "") available.push(i);
+          }
+          if (available.length > 0) {
+            move = available[Math.floor(Math.random() * available.length)];
+          }
+        }
+        if (move !== null) {
+          let cell = cells[move];
+          cell.textContent = "X";
+          cell.classList.add("disabled", "x");
+          gameState[move] = "X";
+        }
+        let winCombo = checkWin();
+        if (winCombo) {
+          message.textContent = "Computer Wins!";
+          drawWinningLine(winCombo);
+          disableBoard();
+          showOverlay();
+          return;
+        }
+        if (gameState.every(s => s !== "")) {
+          message.textContent = "It's a Draw!";
+          disableBoard();
+          showOverlay();
+          return;
+        }
+        // Giliran kembali ke pemain ("O")
+        currentPlayer = "O";
+        updatePlayerIndicators();
+        message.textContent = `Player's Turn`;
+      }
+
+      // Mencari langkah kemenangan langsung untuk pemain yang diberikan ("O" atau "X")
+      function findWinningMove(player) {
+        for (let i = 0; i < 9; i++) {
+          if (gameState[i] === "") {
+            gameState[i] = player;
+            let simulatedWin = false;
+            const wins = [
+              [0,1,2], [3,4,5], [6,7,8],
+              [0,3,6], [1,4,7], [2,5,8],
+              [0,4,8], [2,4,6]
+            ];
+            for (let combo of wins) {
+              const [a, b, c] = combo;
+              if (
+                gameState[a] !== "" &&
+                gameState[a] === gameState[b] &&
+                gameState[a] === gameState[c]
+              ) {
+                simulatedWin = true;
+                break;
+              }
+            }
+            gameState[i] = "";
+            if (simulatedWin) return i;
+          }
+        }
+        return null;
+      }
+
+      function resetGame() {
+        createBoard();
+      }
+      
+      // Event listeners
+      resetBtn.addEventListener("click", resetGame);
+      retryBtn.addEventListener("click", resetGame);
+
+      // Initialize the game
+      createBoard();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+/public
+  /css
+    - styles.css (main styles)
+    - components.css (component-specific styles)
+  /js
+    - components.js (for loading components)
+    - utils.js (utility functions)
+  /components
+    - header.html
+    - navbar.html
+    - footer.html
+  /pages
+    - tic-tac-toe/
+      - modes.html
+      - pvp.html
+      - pvc.html
+      - online.html
+  /config
+    - firebase.js (your existing config)
+  - index.html (main entry point)
+
+(Outside public folder)
+- firebase.json
+- .firebaserc
+- etc.
